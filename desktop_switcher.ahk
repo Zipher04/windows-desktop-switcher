@@ -68,6 +68,7 @@ mapDesktopsFromRegistry()
         ; old guess and pray we're still correct :-D.
         if (DesktopIter = CurrentDesktopId) {
             CurrentDesktop := i + 1
+			_ChangeAppearance(CurrentDesktop)
             OutputDebug, Current desktop number is %CurrentDesktop% with an ID of %DesktopIter%.
             break
         }
@@ -125,6 +126,8 @@ _switchDesktopToTarget(targetDesktop)
         CurrentDesktop--
         OutputDebug, [left] target: %targetDesktop% current: %CurrentDesktop%
     }
+	
+	_ChangeAppearance(CurrentDesktop)
 
     ; Makes the WinActivate fix less intrusive
     Sleep, 50
@@ -197,7 +200,7 @@ getForemostWindowIdOnDesktop(n)
 MoveCurrentWindowToDesktop(desktopNumber) {
     WinGet, activeHwnd, ID, A
     DllCall(MoveWindowToDesktopNumberProc, UInt, activeHwnd, UInt, desktopNumber - 1)
-    switchDesktopByNumber(desktopNumber)
+    ; switchDesktopByNumber(desktopNumber)
 }
 
 MoveCurrentWindowToRightDesktop()
@@ -243,4 +246,16 @@ deleteVirtualDesktop()
     DesktopCount--
     CurrentDesktop--
     OutputDebug, [delete] desktops: %DesktopCount% current: %CurrentDesktop%
+}
+
+Menu, Tray, NoStandard
+Menu, Tray, Icon, icons/+.ico
+
+_ChangeAppearance(n:=1) {
+    if (FileExist("./icons/" . n ".ico")) {
+        Menu, Tray, Icon, icons/%n%.ico
+    }
+    else {
+        Menu, Tray, Icon, icons/+.ico
+    }
 }
